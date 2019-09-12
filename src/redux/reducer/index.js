@@ -35,7 +35,7 @@ const mainReducer = (state = defaultState, action) => {
         case actionTypes.LOGIN_FAILED:
             return {
                 ...state,
-                error: 'неправильные учетные данные'
+                error: 'Hеправильные учетные данные'
             }
     }
     return state;
