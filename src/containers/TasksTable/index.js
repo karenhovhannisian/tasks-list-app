@@ -7,44 +7,34 @@ import {Table, Pagination, PaginationItem, PaginationLink} from "reactstrap";
 
 class ReactTableComponent extends Component {
     state = {
-        editableTaskId: null
+        editableTaskId: null,
+        sortByField: "createdAt",
+        sortDirection: 0
     }
 
    componentDidMount() {
-       this.props.getTasks()
+       this.props.getTasks(this.state.sortByField)
    }
 
-   renderPagination(){
+   renderPagination(count){
+        const pages = [];
+       for (var i = 0; i< count; i++) {
+           pages.push(i)
+       }
        return (
            <Pagination style={{marginLeft: 50}}>
                <PaginationItem>
                    <PaginationLink previous href="#" />
                </PaginationItem>
-               <PaginationItem active={true}>
-                   <PaginationLink href="#">
-                       1
-                   </PaginationLink>
-               </PaginationItem>
-               <PaginationItem>
-                   <PaginationLink href="#">
-                       2
-                   </PaginationLink>
-               </PaginationItem>
-               <PaginationItem>
-                   <PaginationLink href="#">
-                       3
-                   </PaginationLink>
-               </PaginationItem>
-               <PaginationItem>
-                   <PaginationLink href="#">
-                       4
-                   </PaginationLink>
-               </PaginationItem>
-               <PaginationItem>
-                   <PaginationLink href="#">
-                       5
-                   </PaginationLink>
-               </PaginationItem>
+               {
+                   pages.map(page => (
+                       <PaginationItem>
+                           <PaginationLink href="#">
+                               {page}
+                           </PaginationLink>
+                       </PaginationItem>
+                   ))
+               }
                <PaginationItem>
                    <PaginationLink next href="#" />
                </PaginationItem>
@@ -54,7 +44,7 @@ class ReactTableComponent extends Component {
 
    componentDidUpdate(prevProps, prevState, snapshot) {
        if (this.props.postAdded){
-           this.props.getTasks()
+           this.props.getTasks(this.state.sortByField)
        }
    }
 
@@ -67,9 +57,22 @@ class ReactTableComponent extends Component {
        this.setState({editableTaskId: task._id})
    }
 
+    sortBy(sortByField){
+        let sortDirection = this.state.sortDirection;
+        if(this.state.sortByField === sortByField){
+            sortDirection = !sortDirection;
+            this.setState({sortDirection})
+        } else {
+            this.setState({sortByField})
+        }
+
+        this.props.getTasks({sortByField, sortDirection})
+    }
+
     render() {
       const {tasks, isLoggedIn} = this.props;
-      const {editableTaskId} = this.state;
+      const {editableTaskId, sortByField, sortDirection} = this.state;
+
         return (
             <div className="row">
                 <div className="col">
@@ -77,16 +80,24 @@ class ReactTableComponent extends Component {
                     <div style={{ padding: '50px' }}>
                         <Table>
                             <thead>
-                            <tr>
-                                <th>Email</th>
-                                <th>Username</th>
-                                <th>Text</th>
-                                <th>Status</th>
+                            <tr className={"pointer"}>
+                                <th onClick={() => this.sortBy("email")}>Email
+                                    {sortByField === "email" && <i className={`ml-2 fas fa-caret-${sortDirection ? "up": "down"}`}/>}
+                                </th>
+                                <th onClick={() => this.sortBy("username")}>Username
+                                    {sortByField === "username" && <i className={`ml-2 fas fa-caret-${sortDirection ? "up": "down"}`}/>}
+                                </th>
+                                <th onClick={() => this.sortBy("text")}>Text
+                                    {sortByField === "text" && <i className={`ml-2 fas fa-caret-${sortDirection ? "up": "down"}`}/>}
+                                </th>
+                                <th onClick={() => this.sortBy("status")}>Status
+                                    {sortByField === "status" && <i className={`ml-2 fas fa-caret-${sortDirection ? "up": "down"}`}/>}
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
                             {
-                                tasks.map(task => (
+                                tasks && tasks.length ? tasks[0].tasks.map(task => (
                                     <tr key={task._id}>
                                         <th scope="row">{task.email}</th>
                                         <td>{task.username}</td>
@@ -98,12 +109,12 @@ class ReactTableComponent extends Component {
                                             className={"pointer"}
                                         >{editableTaskId === task._id ? "Save": "Edit"}</td>}
                                     </tr>
-                                ))
+                                )) : <h1>Not found!!</h1>
                             }
                             </tbody>
                         </Table>
                     </div>
-                    {this.renderPagination()}
+                    {tasks && tasks[0].tasks.length > 2 && this.renderPagination(tasks[0].total_task_count)}
                 </div>
             </div>
         );
@@ -111,13 +122,13 @@ class ReactTableComponent extends Component {
 }
 
 const mapStateToProps = (state) => ({
-        tasks: state.tasks ? state.tasks[0].tasks : [],
+        tasks: state.tasks,
         isLoggedIn: state.isLoggedIn
 });
 
 const mapDispatchToProps = (dispatch) => ({
     postTask: (data) => dispatch(ACTIONS.attemptPostTask(data)),
-    getTasks: () => dispatch(ACTIONS.attemptGetTasks()),
+    getTasks: (data) => dispatch(ACTIONS.attemptGetTasks(data)),
     editTask: (data) => dispatch(ACTIONS.attemptEditTask(data))
 });
 

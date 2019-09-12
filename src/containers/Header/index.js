@@ -18,7 +18,6 @@ class Header extends Component {
 
     render() {
         const {isLoggedIn} = this.props
-        console.log(isLoggedIn)
         return (
             <div className="mb-4">
                 <Navbar style={{cursor: "pointer"}} color="light" light expand>

@@ -33,8 +33,6 @@ class Login extends Component {
         this.setState({
             errors
         }, () => {
-            console.log(Object.keys(errors), "3")
-
             if (!!Object.keys(errors).length) {
                 return
             }
@@ -45,7 +43,6 @@ class Login extends Component {
     }
 
     login(event) {
-        console.log("111")
         event.preventDefault();
         const { username, password } = this.state;
 
@@ -55,10 +52,8 @@ class Login extends Component {
     }
 
     render() {
-        console.log(this.props, "555")
         const { username, password, errors } = this.state;
         const { errorMessage } = this.props;
-        console.log(!!errors.username, ":::")
         return (
             <div className="row justify-content-center">
                 <div className="col-4 border border-grey py-5">

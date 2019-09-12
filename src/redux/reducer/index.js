@@ -8,7 +8,6 @@ const defaultState = {
 };
 
 const mainReducer = (state = defaultState, action) => {
-    console.log(action, "reducer")
     switch (action.type) {
         case actionTypes.GET_TASKS_SUCCESS:
             return {
@@ -34,7 +33,6 @@ const mainReducer = (state = defaultState, action) => {
                 isLoggedIn: false
             }
         case actionTypes.LOGIN_FAILED:
-            console.log(action, "action.data")
             return {
                 ...state,
                 error: 'неправильные учетные данные'

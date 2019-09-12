@@ -14,7 +14,7 @@ export const loginFailed = (error) => ({type: LOGIN_FAILED, payload: error});
 export const ATTEMPT_GET_TASKS = "ATTEMPT_GET_TASKS";
 export const GET_TASKS_SUCCESS = "GET_TASKS_SUCCESS";
 export const GET_TASKS_FAIL = "GET_TASKS_FAIL";
-export const attemptGetTasks = () => ({type: ATTEMPT_GET_TASKS});
+export const attemptGetTasks = (data) => ({type: ATTEMPT_GET_TASKS, payload: data});
 export const getTasksSuccess = (data) => ({type: GET_TASKS_SUCCESS, payload: data});
 export const getTasksFail = (error) => ({type: GET_TASKS_FAIL, payload: error});
 
