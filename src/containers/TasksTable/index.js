@@ -30,7 +30,10 @@ class ReactTableComponent extends Component {
            }
        return (
            <Pagination style={{marginLeft: 50}}>
-               <PaginationItem>
+               <PaginationItem
+                   disabled={this.state.currentPage === 1}
+                   onClick={() => this.state.currentPage !== 1 && this.getElementsForPage(--this.state.currentPage)}
+               >
                    <PaginationLink previous href="#" />
                </PaginationItem>
                {
@@ -44,7 +47,11 @@ class ReactTableComponent extends Component {
                        </PaginationItem>
                    ))
                }
-               <PaginationItem>
+               <PaginationItem
+                   disabled={this.state.currentPage === pages.length}
+                   onClick={() => this.state.currentPage !== pages.length && this.getElementsForPage(++this.state.currentPage)}
+               >
+
                    <PaginationLink next href="#" />
                </PaginationItem>
            </Pagination>
@@ -63,7 +70,7 @@ class ReactTableComponent extends Component {
              this.setState({editableTaskId: null});
              return
         }
-       this.setState({editableTaskId: task._id})
+       this.setState({editableTaskId: task._id, editedValue: task.text})
    }
 
     sortBy(sortByField){
@@ -86,7 +93,7 @@ class ReactTableComponent extends Component {
 
     render() {
       const {tasks, isLoggedIn} = this.props;
-      const {editableTaskId, sortByField, sortDirection} = this.state;
+      const {editableTaskId, sortByField, sortDirection, editedValue} = this.state;
 
         return (
             <div className="row">
@@ -97,16 +104,16 @@ class ReactTableComponent extends Component {
                             <thead>
                             <tr className={"pointer"}>
                                 <th onClick={() => this.sortBy("email")}>Email
-                                    {sortByField === "email" && <i className={`ml-2 fas fa-caret-${sortDirection ? "up": "down"}`}/>}
+                                    {sortByField === "email" && <i className={`ml-2 fas fa-caret-${sortDirection === "asc" ? "up": "down"}`}/>}
                                 </th>
                                 <th onClick={() => this.sortBy("username")}>Username
-                                    {sortByField === "username" && <i className={`ml-2 fas fa-caret-${sortDirection ? "up": "down"}`}/>}
+                                    {sortByField === "username" && <i className={`ml-2 fas fa-caret-${sortDirection === "asc"  ? "up": "down"}`}/>}
                                 </th>
                                 <th onClick={() => this.sortBy("text")}>Text
-                                    {sortByField === "text" && <i className={`ml-2 fas fa-caret-${sortDirection ? "up": "down"}`}/>}
+                                    {sortByField === "text" && <i className={`ml-2 fas fa-caret-${sortDirection === "asc"  ? "up": "down"}`}/>}
                                 </th>
                                 <th onClick={() => this.sortBy("status")}>Status
-                                    {sortByField === "status" && <i className={`ml-2 fas fa-caret-${sortDirection ? "up": "down"}`}/>}
+                                    {sortByField === "status" && <i className={`ml-2 fas fa-caret-${sortDirection === "asc"  ? "up": "down"}`}/>}
                                 </th>
                             </tr>
                             </thead>
@@ -116,15 +123,18 @@ class ReactTableComponent extends Component {
                                     <tr key={task._id}>
                                         <th scope="row">{task.email}</th>
                                         <td>{task.username}</td>
-                                        <td>{editableTaskId === task._id ? <input  onChange={({target}) => this.setState({editedValue: target.value})}/> : task.text}</td>
+                                        <td>{editableTaskId === task._id ? <input  value={editedValue} onChange={({target}) => this.setState({editedValue: target.value})}/> : task.text}</td>
                                         <td>{!task.status ? "выполнено" : "Oтредактировано администратором"}</td>
                                         {isLoggedIn &&
                                         <td
                                             onClick={() => this.handleEdit(task)}
                                             className={"pointer"}
-                                        >{editableTaskId === task._id ? "Save": "Edit"}</td>}
+                                        >
+                                            {editableTaskId === task._id ? " Сахранить": "Редактировать"}
+                                            <i className={`fas ml-1 fa-${editableTaskId === task._id ? "save": "edit"} font-weight-light`}/>
+                                        </td>}
                                     </tr>
-                                )) : <p>Loading...</p>
+                                )) : <p>Загрузка...</p>
                             }
                             </tbody>
                         </Table>

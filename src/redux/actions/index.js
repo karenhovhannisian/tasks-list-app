@@ -16,7 +16,7 @@ export const GET_TASKS_SUCCESS = "GET_TASKS_SUCCESS";
 export const GET_TASKS_FAIL = "GET_TASKS_FAIL";
 export const attemptGetTasks = (data) => ({type: ATTEMPT_GET_TASKS, payload: data});
 export const getTasksSuccess = (data) => ({type: GET_TASKS_SUCCESS, payload: data});
-export const getTasksFail = (error) => ({type: GET_TASKS_FAIL, payload: error});
+export const getTasksFailed = (error) => ({type: GET_TASKS_FAIL, payload: error});
 
 /**
  * Post task action creators
