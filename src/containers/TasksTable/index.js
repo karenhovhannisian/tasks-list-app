@@ -9,18 +9,25 @@ class ReactTableComponent extends Component {
     state = {
         editableTaskId: null,
         sortByField: "createdAt",
-        sortDirection: 0
+        sortDirection: "asc",
+        currentPage: 1
     }
 
    componentDidMount() {
        this.props.getTasks(this.state.sortByField)
    }
 
+    getElementsForPage(currentPage){
+        const {sortByField, sortDirection } = this.state;
+        this.setState({currentPage});
+        this.props.getTasks({sortByField, sortDirection, currentPage})
+    }
+
    renderPagination(count){
         const pages = [];
-       for (var i = 0; i< count; i++) {
-           pages.push(i)
-       }
+           for (var i = 1; i < count / 3 + 1; i++) {
+               pages.push(i)
+           }
        return (
            <Pagination style={{marginLeft: 50}}>
                <PaginationItem>
@@ -28,7 +35,9 @@ class ReactTableComponent extends Component {
                </PaginationItem>
                {
                    pages.map(page => (
-                       <PaginationItem>
+                       <PaginationItem
+                           active={this.state.currentPage === page}
+                           onClick={() => this.getElementsForPage(page)}>
                            <PaginationLink href="#">
                                {page}
                            </PaginationLink>
@@ -60,13 +69,19 @@ class ReactTableComponent extends Component {
     sortBy(sortByField){
         let sortDirection = this.state.sortDirection;
         if(this.state.sortByField === sortByField){
-            sortDirection = !sortDirection;
-            this.setState({sortDirection})
+            if(sortDirection === "asc"){
+
+                sortDirection = "desc"
+            } else {
+                sortDirection = "asc"
+
+            }
+            this.setState({sortDirection, currentPage: 1})
         } else {
-            this.setState({sortByField})
+            this.setState({sortByField, currentPage: 1})
         }
 
-        this.props.getTasks({sortByField, sortDirection})
+        this.props.getTasks({sortByField, sortDirection, currentPage: 1})
     }
 
     render() {
@@ -109,12 +124,12 @@ class ReactTableComponent extends Component {
                                             className={"pointer"}
                                         >{editableTaskId === task._id ? "Save": "Edit"}</td>}
                                     </tr>
-                                )) : <h1>Not found!!</h1>
+                                )) : <p>Loading...</p>
                             }
                             </tbody>
                         </Table>
                     </div>
-                    {tasks && tasks[0].tasks.length > 2 && this.renderPagination(tasks[0].total_task_count)}
+                    {tasks && tasks[0].total_task_count > 2 && this.renderPagination(tasks[0].total_task_count)}
                 </div>
             </div>
         );

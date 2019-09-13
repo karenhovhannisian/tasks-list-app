@@ -38,8 +38,8 @@ export default class Api {
         })
     }
 
-    static getTasks({sortByField,sortDirection}){
-        return axios(`${mainParams.apiUrl}/api/tasks?sort_field=${sortByField}&sort_direction=${sortDirection ? "asc": "desc"}`)
+    static getTasks(sortByField="username",sortDirection="asc", currentPage=1){
+        return axios(`${mainParams.apiUrl}/api/tasks?sort_field=${sortByField}&sort_direction=${sortDirection}&page=${currentPage}&size=3`)
     }
 
     static logout(){
